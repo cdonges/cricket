@@ -24,20 +24,25 @@ namespace CricketScores
 
                 using (WebClient wc = new WebClient())
                 {
-                    string html = wc.DownloadString("http://static.cricinfo.com/rss/livescores.xml");
-
-                    var countryMatch = country.Match(html);
-                    if (countryMatch.Success)
+                    while (true)
                     {
-                        var wicketsMatch = wickets.Matches(countryMatch.Value);
-                        string wicketsStr = string.Join(",", wicketsMatch.Cast<Match>().Select(m => m.Groups[1].Value));
-                        Console.WriteLine(wicketsStr);
+                        string html = wc.DownloadString("http://static.cricinfo.com/rss/livescores.xml");
 
-                        if (serial.IsOpen && wicketsStr != prevWickets)
+                        var countryMatch = country.Match(html);
+                        if (countryMatch.Success)
                         {
-                            prevWickets = wicketsStr;
-                            serial.Write(new byte[] { 0x77 }, 0, 1);
+                            var wicketsMatch = wickets.Matches(countryMatch.Value);
+                            string wicketsStr = string.Join(",", wicketsMatch.Cast<Match>().Select(m => m.Groups[1].Value));
+                            Console.WriteLine(wicketsStr);
+
+                            if (serial.IsOpen && wicketsStr != prevWickets)
+                            {
+                                prevWickets = wicketsStr;
+                                serial.Write(new byte[] { 0x77 }, 0, 1);
+                            }
                         }
+
+                        System.Threading.Thread.Sleep(60 * 1000);
                     }
                 }
             }
