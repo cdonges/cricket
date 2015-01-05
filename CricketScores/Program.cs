@@ -54,6 +54,7 @@ namespace CricketScores
                                 prevWickets = wicketsStr;
 
                                 // write a 'w' to serial
+                                Console.WriteLine("w");
                                 serial.Write(new byte[] { 0x77 }, 0, 1);
                             }
                         }
