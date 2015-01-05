@@ -58,10 +58,6 @@ namespace CricketScores
                                 serial.Write(new byte[] { 0x77 }, 0, 1);
                             }
                         }
-                        else
-                        {
-                            Console.WriteLine("No Australia matches");
-                        }
 
                         // try every minute
                         System.Threading.Thread.Sleep(60 * 1000);
