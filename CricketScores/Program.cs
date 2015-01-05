@@ -30,7 +30,7 @@ namespace CricketScores
             Regex country = new Regex("<title>.*Australia.*</title>");
             Regex wickets = new Regex("/(?<wickets>[0-9]{1,2})");
 
-            using (SerialPort serial = new SerialPort("COM5", 38400))
+            using (SerialPort serial = new SerialPort("COM3", 38400))
             {
                 serial.Open();
 

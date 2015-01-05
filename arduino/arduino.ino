@@ -16,18 +16,21 @@ void loop()
     
     if (inputByte == 'w')
     {
-        int angle=0;
-        while (angle <=90)
+        for (int i = 0; i < 10; i++)
         {
-            myservo.write(angle);
-            delay(10);
-            angle++;
-        }
-        while (angle > 0)
-        {
-            myservo.write(angle);
-            delay(10);
-            angle--;
+          int angle=0;
+          while (angle <=90)
+          {
+              myservo.write(angle);
+              delay(5);
+              angle++;
+          }
+          while (angle > 10)
+          {
+              myservo.write(angle);
+              delay(5);
+              angle--;
+          }
         }
      }
   }
