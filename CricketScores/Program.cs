@@ -28,7 +28,7 @@ namespace CricketScores
         {
             // aussie aussie aussie
             Regex country = new Regex("<title>.*Australia.*</title>");
-            Regex wicketsRuns = new Regex("(?<runs>[0-9]{1,3})/(?<wickets>[0-9]{1,2})");
+            Regex wicketsRuns = new Regex(@"(?<runs>[0-9]{1,3})/(?<wickets>[0-9]{1,2}) \*");
 
             using (SerialPort serial = new SerialPort("COM8", 38400))
             {
