@@ -4,7 +4,8 @@ Servo myservo;
 int dataPin = 2;
 int latchPin = 3;
 int clockPin = 4;
-int overflowPin = 5;
+int runs9 = 5;
+int runs10 = 10;
 int servoPin = 11;
 
 int wicketsPins[] = { 
@@ -17,7 +18,8 @@ void setup()
   pinMode(dataPin, OUTPUT);
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
-  pinMode(overflowPin, OUTPUT);
+  pinMode(runs9, OUTPUT);
+  pinMode(runs10, OUTPUT);
 
   for (int i = 0; i < 4; i++)
   {
@@ -74,7 +76,8 @@ void loop()
       shiftOut(dataPin, clockPin, MSBFIRST, runs);
       digitalWrite(latchPin, HIGH);
 
-      digitalWrite(overflowPin, (runs >> 8) & 1 ? HIGH : LOW);
+      digitalWrite(runs9, (runs >> 8) & 1 ? HIGH : LOW);
+      digitalWrite(runs10, (runs >> 9) & 1 ? HIGH : LOW);
     }
   }
 }
