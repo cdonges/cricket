@@ -37,6 +37,18 @@ void loop()
     //Read buffer
     char inputByte = Serial.read();
 
+    if (inputByte == 'r')
+    {
+      int runs = Serial.parseInt();
+
+      digitalWrite(latchPin, LOW);
+      shiftOut(dataPin, clockPin, MSBFIRST, runs);
+      digitalWrite(latchPin, HIGH);
+
+      digitalWrite(runs9, (runs >> 8) & 1 ? HIGH : LOW);
+      digitalWrite(runs10, (runs >> 9) & 1 ? HIGH : LOW);
+    }
+    
     if (inputByte == 'w')
     {
       int wickets = Serial.parseInt();
@@ -66,18 +78,6 @@ void loop()
         }
         prevWickets = wickets;
       }
-    }
-
-    if (inputByte == 'r')
-    {
-      int runs = Serial.parseInt();
-
-      digitalWrite(latchPin, LOW);
-      shiftOut(dataPin, clockPin, MSBFIRST, runs);
-      digitalWrite(latchPin, HIGH);
-
-      digitalWrite(runs9, (runs >> 8) & 1 ? HIGH : LOW);
-      digitalWrite(runs10, (runs >> 9) & 1 ? HIGH : LOW);
     }
   }
 }

@@ -47,18 +47,19 @@ namespace CricketScores
                             var wicketsRunsMatch = wicketsRuns.Matches(countryMatch.Value).Cast<Match>().Last();
                             string wicketsStr = wicketsRunsMatch.Groups["wickets"].Value;
                             string runsStr = wicketsRunsMatch.Groups["runs"].Value;
-                            Console.WriteLine(wicketsStr);
+                            Console.WriteLine(countryMatch.Value);
 
                             if (string.IsNullOrWhiteSpace(wicketsStr))
                             {
                                 wicketsStr = "0";
                             }
 
-                            Console.WriteLine("w" + wicketsStr);
-                            serial.Write("w" + wicketsStr + "\n"); 
                             Console.WriteLine("r" + runsStr);
                             serial.Write("r" + runsStr + "\n");
-                        }
+
+                            Console.WriteLine("w" + wicketsStr);
+                            serial.Write("w" + wicketsStr + "\n"); 
+						}
                         else
                         {
                             Console.WriteLine("No Australia matches");
