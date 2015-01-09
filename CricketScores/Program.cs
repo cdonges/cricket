@@ -44,21 +44,25 @@ namespace CricketScores
                         var countryMatch = country.Match(html);
                         if (countryMatch.Success)
                         {
-                            var wicketsRunsMatch = wicketsRuns.Matches(countryMatch.Value).Cast<Match>().Last();
-                            string wicketsStr = wicketsRunsMatch.Groups["wickets"].Value;
-                            string runsStr = wicketsRunsMatch.Groups["runs"].Value;
-                            Console.WriteLine(countryMatch.Value);
-
-                            if (string.IsNullOrWhiteSpace(wicketsStr))
+                            var wicketsRunsMatchs = wicketsRuns.Matches(countryMatch.Value);
+                            if (wicketsRunsMatchs.Count > 0)
                             {
-                                wicketsStr = "0";
+                                var wicketsRunsMatch = wicketsRuns.Matches(countryMatch.Value).Cast<Match>().Last();
+                                string wicketsStr = wicketsRunsMatch.Groups["wickets"].Value;
+                                string runsStr = wicketsRunsMatch.Groups["runs"].Value;
+                                Console.WriteLine(countryMatch.Value);
+
+                                if (string.IsNullOrWhiteSpace(wicketsStr))
+                                {
+                                    wicketsStr = "0";
+                                }
+
+                                Console.WriteLine("r" + runsStr);
+                                serial.Write("r" + runsStr + "\n");
+
+                                Console.WriteLine("w" + wicketsStr);
+                                serial.Write("w" + wicketsStr + "\n");
                             }
-
-                            Console.WriteLine("r" + runsStr);
-                            serial.Write("r" + runsStr + "\n");
-
-                            Console.WriteLine("w" + wicketsStr);
-                            serial.Write("w" + wicketsStr + "\n"); 
 						}
                         else
                         {
