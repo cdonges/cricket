@@ -1,17 +1,24 @@
 #include <Servo.h>
+#include <LiquidCrystal.h>
+
 Servo myservo;
 
-int dataPin = 2;
-int latchPin = 3;
-int clockPin = 4;
 int servoPin = 11;
 
 int prevWickets = -1;
+
+char display2[17];
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 void setup() 
 {
   Serial.begin(38400);
   myservo.attach(servoPin);
+  
+  lcd.begin(16, 2);
+  
+  lcd.print("Aussie! Aussie!");
 }
 
 void loop() 
@@ -24,10 +31,6 @@ void loop()
     if (inputByte == 'w')
     {
       int wickets = Serial.parseInt();
-
-      digitalWrite(latchPin, LOW);
-      shiftOut(dataPin, clockPin, MSBFIRST, wickets);
-      digitalWrite(latchPin, HIGH);
 
       if (prevWickets != wickets)
       {
@@ -54,6 +57,17 @@ void loop()
     if (inputByte == 'r')
     {
       int runs = Serial.parseInt();
+    }
+
+    if (inputByte == 'x')
+    {
+      int charsRead = Serial.readBytesUntil('\n', display2, 16);
+      if (charsRead > 0)
+      {
+        display2[charsRead] = '\0';
+        lcd.setCursor(0, 1);
+        lcd.print(display2);
+      }
     }
   }
 }

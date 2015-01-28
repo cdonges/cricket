@@ -29,8 +29,9 @@ namespace CricketScores
             // aussie aussie aussie
             Regex country = new Regex("<title>.*Australia.*</title>");
             Regex wicketsRuns = new Regex(@"(?<runs>[0-9]{1,3})/(?<wickets>[0-9]{1,2}) \*|(?<runs>[0-9]{1,3}) \*");
+            Regex teamsRegex = new Regex(@"<title>(?<team1>.*)v(?<team2>.*)<\/title>");
 
-            using (SerialPort serial = new SerialPort("COM8", 38400))
+            using (SerialPort serial = new SerialPort("COM3", 38400))
             {
                 serial.Encoding = System.Text.Encoding.ASCII;
                 serial.Open();
@@ -47,7 +48,15 @@ namespace CricketScores
                             var wicketsRunsMatch = wicketsRuns.Matches(countryMatch.Value).Cast<Match>().Last();
                             string wicketsStr = wicketsRunsMatch.Groups["wickets"].Value;
                             string runsStr = wicketsRunsMatch.Groups["runs"].Value;
-                            Console.WriteLine(wicketsStr);
+
+                            Console.WriteLine(countryMatch.Value);
+                            var teams = teamsRegex.Matches(countryMatch.Value);
+
+                            string team1 = Truncate(teams[0].Groups["team1"].Value.Trim(), 16).PadRight(16);
+                            string team2 = Truncate(teams[0].Groups["team2"].Value.Trim(), 16).PadRight(16);
+
+                            serial.Write("1" + team1 + "\n");
+                            serial.Write("2" + team2 + "\n"); 
 
                             if (string.IsNullOrWhiteSpace(wicketsStr))
                             {
@@ -69,6 +78,11 @@ namespace CricketScores
                     }
                 }
             }
+        }
+
+        public static string Truncate(string str, int maxLength)
+        {
+            return str.Substring(0, Math.Min(str.Length, maxLength));
         }
     }
 }
