@@ -29,7 +29,9 @@ namespace CricketScores
             // aussie aussie aussie
             Regex country = new Regex("<title>.*Australia.*</title>");
             Regex wicketsRuns = new Regex(@"(?<runs>[0-9]{1,3})/(?<wickets>[0-9]{1,2}) \*|(?<runs>[0-9]{1,3}) \*");
-            Regex teamsRegex = new Regex(@"<title>(?<team1>.*)v(?<team2>.*)<\/title>");
+            Regex teamsRegex = new Regex(@"(?<team1>[A-Za-z ]*) (?<score1>[0-9\/]*).*v (?<team2>[A-Za-z ]*) (?<score2>[0-9\/]*)");
+
+            
 
             using (SerialPort serial = new SerialPort("COM3", 38400))
             {
@@ -52,8 +54,10 @@ namespace CricketScores
                             Console.WriteLine(countryMatch.Value);
                             var teams = teamsRegex.Matches(countryMatch.Value);
 
-                            string team1 = Truncate(teams[0].Groups["team1"].Value.Trim(), 16).PadRight(16);
-                            string team2 = Truncate(teams[0].Groups["team2"].Value.Trim(), 16).PadRight(16);
+
+
+                            string team1 = (Truncate(teams[0].Groups["team1"].Value.Trim(), 10) + " " + Truncate(teams[0].Groups["score1"].Value.Trim(), 5)).PadRight(16);
+                            string team2 = (Truncate(teams[0].Groups["team2"].Value.Trim(), 10) + " " + Truncate(teams[0].Groups["score2"].Value.Trim(), 5)).PadRight(16);
 
                             serial.Write("1" + team1 + "\n");
                             serial.Write("2" + team2 + "\n"); 

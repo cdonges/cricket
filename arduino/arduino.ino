@@ -3,7 +3,7 @@
 
 Servo myservo;
 
-int servoPin = 11;
+int servoPin = 9;
 
 int prevWickets = -1;
 
@@ -14,7 +14,7 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 void setup() 
 {
   Serial.begin(38400);
-  myservo.attach(servoPin);
+//  myservo.attach(servoPin);
   
   lcd.begin(16, 2);
   
@@ -59,13 +59,13 @@ void loop()
       int runs = Serial.parseInt();
     }
 
-    if (inputByte == 'x')
+    if (inputByte == '1' || inputByte == '2')
     {
       int charsRead = Serial.readBytesUntil('\n', display2, 16);
       if (charsRead > 0)
       {
         display2[charsRead] = '\0';
-        lcd.setCursor(0, 1);
+        lcd.setCursor(0, inputByte == '1' ? 0 : 1);
         lcd.print(display2);
       }
     }
