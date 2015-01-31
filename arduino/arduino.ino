@@ -14,7 +14,7 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 void setup() 
 {
   Serial.begin(38400);
-//  myservo.attach(servoPin);
+  myservo.attach(servoPin);
   
   lcd.begin(16, 2);
   
