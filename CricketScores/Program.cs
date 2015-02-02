@@ -30,7 +30,7 @@ namespace CricketScores
             Regex country = new Regex("<title>.*Australia.*</title>");
             ////Regex country = new Regex("<title>.*India.*</title>");
             Regex wicketsRuns = new Regex(@"(?<runs>[0-9]{1,3})/(?<wickets>[0-9]{1,2}) \*|(?<runs>[0-9]{1,3}) \*");
-            Regex teamsRegex = new Regex(@"(?<team1>[A-Za-z ]*) (?<score1>[0-9\/]*).*v (?<team2>[A-Za-z ]*) (?<score2>[0-9\/]*)");
+            Regex teamsRegex = new Regex(@"(?<team1>[A-Za-z ]*) (?<score1>[0-9\/]*).*v (?<team2>[A-Za-z ]*) *(?<score2>[0-9\/]*)");
 
             
 
@@ -48,14 +48,20 @@ namespace CricketScores
                         var countryMatch = country.Match(html);
                         if (countryMatch.Success)
                         {
-                            var wicketsRunsMatch = wicketsRuns.Matches(countryMatch.Value).Cast<Match>().Last();
-                            string wicketsStr = wicketsRunsMatch.Groups["wickets"].Value;
-                            string runsStr = wicketsRunsMatch.Groups["runs"].Value;
+                            var wrm = wicketsRuns.Matches(countryMatch.Value).Cast<Match>();
+
+                            string wicketsStr = string.Empty;
+                            string runsStr = string.Empty;
+
+                            if (wrm.Any())
+                            {
+                                var wicketsRunsMatch = wrm.Last();
+                                wicketsStr = wicketsRunsMatch.Groups["wickets"].Value;
+                                runsStr = wicketsRunsMatch.Groups["runs"].Value;
+                            }
 
                             Console.WriteLine(countryMatch.Value);
                             var teams = teamsRegex.Matches(countryMatch.Value);
-
-
 
                             string team1 = (Truncate(teams[0].Groups["team1"].Value.Trim(), 10).PadRight(9) + " " + Truncate(teams[0].Groups["score1"].Value.Trim(), 6)).PadRight(16);
                             string team2 = (Truncate(teams[0].Groups["team2"].Value.Trim(), 10).PadRight(9) + " " + Truncate(teams[0].Groups["score2"].Value.Trim(), 6)).PadRight(16);
