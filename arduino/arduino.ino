@@ -66,6 +66,11 @@ void loop()
     if (inputByte == 'w')
     {
       int wickets = Serial.parseInt();
+      if (wickets != prevWickets)
+      {
+        prevWickets = wickets;
+        tone(piezo, 440, 50);
+      }
     }
 
     if (inputByte == 'r')
