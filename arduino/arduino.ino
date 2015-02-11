@@ -1,87 +1,118 @@
-#include <Servo.h>
-Servo myservo;
+#include <LiquidCrystal.h>
 
-int dataPin = 2;
-int latchPin = 3;
-int clockPin = 4;
-int runs9 = 5;
-int runs10 = 10;
-int servoPin = 11;
-
-int wicketsPins[] = { 
-  6, 7, 8, 9 };
+int piezo = 10;
 
 int prevWickets = -1;
 
-void setup() 
+char d1a[30] = " ";
+char d1b[8] = " ";
+
+char d2a[30] = " ";
+char d2b[8] = " ";
+
+int pos = 0;
+int longest = 0;
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup()
 {
-  pinMode(dataPin, OUTPUT);
-  pinMode(latchPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
-  pinMode(runs9, OUTPUT);
-  pinMode(runs10, OUTPUT);
-
-  for (int i = 0; i < 4; i++)
-  {
-    pinMode(wicketsPins[i], OUTPUT);
-  }
-
   Serial.begin(38400);
-  myservo.attach(servoPin);
+
+  pinMode(piezo, OUTPUT);
+
+  lcd.begin(16, 2);
+  lcd.clear();
 }
 
-void loop() 
+void loop()
 {
-  if (Serial.available() > 0) 
+
+  lcd.setCursor(9, 0);
+  lcd.print(d1b);
+
+  lcd.setCursor(9, 1);
+  lcd.print(d2b);
+
+  if (pos > longest - 9)
+  {
+    pos = 0;
+    delay(1000);
+  }
+
+  for (int i = 0; i < 9; i++)
+  {
+    if (pos < strlen(d1a) - 8)
+    {
+      lcd.setCursor(i, 0);
+      lcd.print(d1a[i + pos]);
+    }
+
+    if (pos < strlen(d2a) - 8)
+    {
+      lcd.setCursor(i, 2);
+      lcd.print(d2a[i + pos]);
+    }
+  }
+  pos++;
+
+  delay(500);
+
+  if (Serial.available() > 0)
   {
     //Read buffer
     char inputByte = Serial.read();
 
-    if (inputByte == 'r')
-    {
-      int runs = Serial.parseInt();
-
-      digitalWrite(latchPin, LOW);
-      shiftOut(dataPin, clockPin, MSBFIRST, runs);
-      digitalWrite(latchPin, HIGH);
-
-      digitalWrite(runs9, (runs >> 8) & 1 ? HIGH : LOW);
-      digitalWrite(runs10, (runs >> 9) & 1 ? HIGH : LOW);
-    }
-    
     if (inputByte == 'w')
     {
       int wickets = Serial.parseInt();
+    }
 
-      for (int i = 0; i < 4; i++)
+    if (inputByte == 'r')
+    {
+      int runs = Serial.parseInt();
+    }
+
+    if (inputByte == '1' || inputByte == '2')
+    {
+      char teamOrScore = Serial.read();
+
+      char* buff;
+
+      if (teamOrScore == 't')
       {
-        digitalWrite(wicketsPins[i], (wickets >> i) & 1 ? HIGH : LOW);
+        if (inputByte == '1')
+        {
+          buff = d1a;
+        }
+        else if (inputByte == '2')
+        {
+          buff = d2a;
+        }
+        
+          longest = max(strlen(d1a), strlen(d2a));
       }
 
-      if (prevWickets != wickets)
+      if (teamOrScore == 's')
       {
-        for (int i = 0; i < 10; i++)
+        if (inputByte == '1')
         {
-          int angle=0;
-          while (angle <=90)
-          {
-            myservo.write(angle);
-            delay(5);
-            angle++;
-          }
-          while (angle > 10)
-          {
-            myservo.write(angle);
-            delay(5);
-            angle--;
-          }
+          buff = d1b;
         }
-        prevWickets = wickets;
+        else if (inputByte == '2')
+        {
+          buff = d2b;
+        }
+      }
+
+      int charsRead = Serial.readBytesUntil('\n', buff, teamOrScore == 't' ? 29 : 7);
+      if (charsRead > 0)
+      {
+        buff[charsRead] = '\0';
       }
     }
   }
 }
-
 
 
 
